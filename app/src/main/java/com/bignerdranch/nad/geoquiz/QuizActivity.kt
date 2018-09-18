@@ -1,6 +1,5 @@
 package com.bignerdranch.nad.geoquiz
 
-import android.nfc.Tag
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -50,6 +49,8 @@ class QuizActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         Log.i(TAG, "onStop")
+//        val question:Question = Question(mAnswerTrue = true)
+//        question.mAnswerTrue
     }
     override fun onDestroy() {
         super.onDestroy()
