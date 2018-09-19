@@ -31,13 +31,15 @@ class QuizActivity : AppCompatActivity() {
         mTrueButton = findViewById(R.id.true_button) as Button
         mTrueButton.setOnClickListener {
             // make a toast on button click event
-            val toast = Toast.makeText(this, R.string.correct_toast, Toast.LENGTH_LONG)
-            toast.setGravity(Gravity.TOP, 0, 0)
-            toast.show()
+//            val toast = Toast.makeText(this, R.string.correct_toast, Toast.LENGTH_LONG)
+//            toast.setGravity(Gravity.TOP, 0, 0)
+//            toast.show()
+            checkAnswer(true)
         }
         mFalseButton = findViewById(R.id.false_button) as Button
         mFalseButton.setOnClickListener {
-            Toast.makeText(this, R.string.incorrect_toast, Toast.LENGTH_LONG).show()
+            checkAnswer(false)
+//            Toast.makeText(this, R.string.incorrect_toast, Toast.LENGTH_LONG).show()
         }
         mQuestionBank = arrayListOf(Question(getString(R.string.question_australia), true), Question(getString(R.string.question_oceans), true), Question(getString(R.string.question_mideast), false), Question(getString(R.string.question_africa), false), Question(getString(R.string.question_americas), true), Question(getString(R.string.question_asia), true))
         mQuestionText = findViewById(R.id.text_question) as TextView
@@ -56,7 +58,21 @@ class QuizActivity : AppCompatActivity() {
     private fun updateQuestion() {
         val question = mQuestionBank[mCurrentIndex].mTextResId
         mQuestionText.text = question
-//        mQuestionText.setText(question)
+    }
+
+    private fun checkAnswer(userPressedTrue: Boolean) {
+        val answerIsTrue = mQuestionBank[mCurrentIndex].answerTrue
+
+        var messageResId = 0
+
+        if (userPressedTrue == answerIsTrue) {
+            messageResId = R.string.correct_toast
+        } else {
+            messageResId = R.string.incorrect_toast
+        }
+
+        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
+                .show()
     }
 
     override fun onStart() {
