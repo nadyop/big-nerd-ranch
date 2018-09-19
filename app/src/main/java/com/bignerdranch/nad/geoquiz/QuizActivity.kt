@@ -15,12 +15,13 @@ class QuizActivity : AppCompatActivity() {
     private lateinit var mTrueButton: Button
     private lateinit var mFalseButton: Button
     private lateinit var mQuestionText: TextView
+    private lateinit var mNextButton: Button
 
     private var TAG: String? = "QuizActivity"
 //    private static final String TAG = "QuizActivity"
 
     private lateinit var mQuestionBank : List<Question>
-    private val mCurrentIndex = 0
+    private var mCurrentIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,11 +39,24 @@ class QuizActivity : AppCompatActivity() {
         mFalseButton.setOnClickListener {
             Toast.makeText(this, R.string.incorrect_toast, Toast.LENGTH_LONG).show()
         }
-
         mQuestionBank = arrayListOf(Question(getString(R.string.question_australia), true), Question(getString(R.string.question_oceans), true), Question(getString(R.string.question_mideast), false), Question(getString(R.string.question_africa), false), Question(getString(R.string.question_americas), true), Question(getString(R.string.question_asia), true))
         mQuestionText = findViewById(R.id.text_question) as TextView
-        val question: String? = mQuestionBank[mCurrentIndex].mTextResId
+//        val question: String? = mQuestionBank[mCurrentIndex].mTextResId
+//        mQuestionText.text = question
+
+        mNextButton = findViewById(R.id.next_button) as Button
+        mNextButton.setOnClickListener {
+            mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size
+//            val question = mQuestionBank[mCurrentIndex].mTextResId
+//            mQuestionText.setText(question)
+            updateQuestion()
+        }
+    }
+
+    private fun updateQuestion() {
+        val question = mQuestionBank[mCurrentIndex].mTextResId
         mQuestionText.text = question
+//        mQuestionText.setText(question)
     }
 
     override fun onStart() {
