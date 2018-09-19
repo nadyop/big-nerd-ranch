@@ -1,3 +1,3 @@
 package com.bignerdranch.nad.geoquiz
 
-data class Question(var mTextResId: Int? = 0, var answerTrue: Boolean? = true)
+data class Question(var mTextResId: String? = "", var answerTrue: Boolean? = true)
