@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Gravity
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 
@@ -15,7 +16,8 @@ class QuizActivity : AppCompatActivity() {
     private lateinit var mTrueButton: Button
     private lateinit var mFalseButton: Button
     private lateinit var mQuestionText: TextView
-    private lateinit var mNextButton: Button
+    private lateinit var mNextButton: ImageView
+    private lateinit var mPrevButton: ImageView
 
     private var TAG: String? = "QuizActivity"
 //    private static final String TAG = "QuizActivity"
@@ -43,15 +45,31 @@ class QuizActivity : AppCompatActivity() {
         }
         mQuestionBank = arrayListOf(Question(getString(R.string.question_australia), true), Question(getString(R.string.question_oceans), true), Question(getString(R.string.question_mideast), false), Question(getString(R.string.question_africa), false), Question(getString(R.string.question_americas), true), Question(getString(R.string.question_asia), true))
         mQuestionText = findViewById(R.id.text_question) as TextView
+        mQuestionText.setOnClickListener {
+            mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size
+            updateQuestion()
+        }
 //        val question: String? = mQuestionBank[mCurrentIndex].mTextResId
 //        mQuestionText.text = question
 
-        mNextButton = findViewById(R.id.next_button) as Button
+        mNextButton = findViewById(R.id.next_button) as ImageView
         mNextButton.setOnClickListener {
             mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size
 //            val question = mQuestionBank[mCurrentIndex].mTextResId
 //            mQuestionText.setText(question)
             updateQuestion()
+        }
+
+        mPrevButton = findViewById(R.id.prev_button) as ImageView
+        if (mCurrentIndex > 0){
+            mPrevButton.setOnClickListener {
+                mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.size
+                updateQuestion()
+            }
+        }else{
+            mPrevButton.setOnClickListener {
+                println("test")
+            }
         }
     }
 
