@@ -1,5 +1,6 @@
 package com.bignerdranch.nad.geoquiz
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -8,6 +9,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.content.Intent
+
+
 
 
 class QuizActivity : AppCompatActivity() {
@@ -18,12 +22,17 @@ class QuizActivity : AppCompatActivity() {
     private lateinit var mQuestionText: TextView
     private lateinit var mNextButton: ImageView
     private lateinit var mPrevButton: ImageView
+    private lateinit var mCheatButton: Button
 
+    //    private static final String TAG = "QuizActivity"
     private var TAG: String? = "QuizActivity"
-//    private static final String TAG = "QuizActivity"
+    private var KEY_INDEX: String? = "index"
+    private var REQ_CODE_CHEAT: Int = 0
 
-    private lateinit var mQuestionBank : List<Question>
+    private lateinit var mQuestionBank : MutableList<Question>
+    private lateinit var mCheatActivity: CheatActivity
     private var mCurrentIndex = 0
+    private var mIsCheater: Boolean? = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,25 +64,26 @@ class QuizActivity : AppCompatActivity() {
         mNextButton = findViewById(R.id.next_button) as ImageView
         mNextButton.setOnClickListener {
             mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size
-//            val question = mQuestionBank[mCurrentIndex].mTextResId
-//            mQuestionText.setText(question)
             updateQuestion()
         }
 
         mPrevButton = findViewById(R.id.prev_button) as ImageView
-        if (mCurrentIndex > 0){
-            mPrevButton.setOnClickListener {
-                mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.size
-                updateQuestion()
-            }
-        }else{
-            mPrevButton.setOnClickListener {
-                println("test")
-            }
+        mPrevButton.setOnClickListener {
+            mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.size
+            updateQuestion()
+        }
+
+        mCheatButton= findViewById(R.id.cheat_button) as Button
+        mCheatButton.setOnClickListener {
+            val answerIsTrue = mQuestionBank[mCurrentIndex].answerTrue
+            val intent = Intent(this@QuizActivity, CheatActivity::class.java)
+            startActivity(intent)
+            startActivityForResult(intent, REQ_CODE_CHEAT)
         }
     }
 
     private fun updateQuestion() {
+        Log.d(TAG, "Updating question text", Exception())
         val question = mQuestionBank[mCurrentIndex].mTextResId
         mQuestionText.text = question
     }
@@ -82,15 +92,29 @@ class QuizActivity : AppCompatActivity() {
         val answerIsTrue = mQuestionBank[mCurrentIndex].answerTrue
 
         var messageResId = 0
-
-        if (userPressedTrue == answerIsTrue) {
-            messageResId = R.string.correct_toast
-        } else {
-            messageResId = R.string.incorrect_toast
+        if (mIsCheater != true){
+            messageResId = R.string.judgment_toast
+        }else{
+            if (userPressedTrue == answerIsTrue) {
+                messageResId = R.string.correct_toast
+            } else {
+                messageResId = R.string.incorrect_toast
+            }
         }
+        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
+    }
 
-        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
-                .show()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK){
+            return
+        }
+        if (requestCode == REQ_CODE_CHEAT){
+            if (data == null){
+                return
+            }
+            mIsCheater = mCheatActivity.wasAnswerShown(data)
+        }
     }
 
     override fun onStart() {
